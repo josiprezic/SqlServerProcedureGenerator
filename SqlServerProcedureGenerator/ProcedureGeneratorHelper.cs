@@ -8,7 +8,6 @@ namespace SqlServerProcedureGenerator
 {
     public class ProcedureGeneratorHelper
     {
-
         private ProcedureGeneratorHelper() { }
 
         public static String GetProcedures(String createStatement, String prefix, String suffix, String searchBy = "")
@@ -190,7 +189,45 @@ namespace SqlServerProcedureGenerator
 
         public static String GetSearchByNameStatement(String createStatement, String prefix, String suffix, String searchBy = "")
         {
-            return "GetSearchByNameStatement";
+
+            if (searchBy == "") { return ""; }
+            String result = "";
+            String searchByChecked = FirstCharToUpper(searchBy);
+            String[] attributes = GetTableColumnNames(createStatement);
+
+            String columnType = GetColumnType(createStatement, searchBy);
+            if (columnType == "") {
+                return "SearchByName: ERROR: Attribute with the following name does not exist: " + searchBy;
+            }
+
+            result += GetCreateProcedureRow(createStatement, prefix, "SelectBy" + searchByChecked, suffix);
+            result += " @" + searchByChecked + " ";
+            result += columnType;
+            result += Enter();
+            result += "AS";
+            result += Enter();
+            result += "SELECT ";
+
+            foreach (String a in attributes)
+            {
+                String withoutTabs = a.Replace("\t", "");
+                result += withoutTabs + ", ";
+            }
+
+            result = result.Remove(result.Length - 1);
+            result = result.Remove(result.Length - 1);
+            result += Enter();
+
+            result += "FROM ";
+            result += GetTableName(createStatement);
+            result += " WHERE ";
+            result += searchBy;
+            result += " = ";
+            result += "@" + searchBy;
+            result += Enter();
+            result += "GO";
+
+            return result;
         }
 
         private static String[] GetTableColumnNames(String createStatement) {
@@ -216,6 +253,23 @@ namespace SqlServerProcedureGenerator
             }
 
             return attributes.ToArray();
+        }
+
+        private static String GetColumnType(String createStatement, String a) {
+            String[] attributes = GetTableColumnNames(createStatement);
+
+
+            for (int i = 0; i < attributes.Length; i++) {
+                String s = attributes[i];
+                if (a == s.Replace("\t", ""))
+                {
+                    String[] types = GetTableColumnTypes(createStatement);
+                    if (types.Length > i && types.Length == attributes.Length) {
+                        return types[i];
+                    }
+                }
+            }
+            return "";
         }
 
         private static String[] GetTableColumnTypes(String createStatement)
@@ -287,5 +341,12 @@ namespace SqlServerProcedureGenerator
             return System.Environment.NewLine + System.Environment.NewLine + System.Environment.NewLine;
         }
 
+        private static string FirstCharToUpper(string input)
+        {
+            if (String.IsNullOrEmpty(input)) {
+                return "";
+            }
+            return input.First().ToString().ToUpper() + input.Substring(1);
+        }
     }
 }
