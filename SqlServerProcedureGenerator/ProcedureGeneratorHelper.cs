@@ -123,7 +123,7 @@ namespace SqlServerProcedureGenerator
             result += "IF EXISTS (SELECT * FROM ";
             result += GetTableName(createStatement);
             result += " WHERE ";
-            result += attributes[0];
+            result += attributes[0].Replace("\t", "");
             result += " = @Id)";
             result += Enter();
 
@@ -135,7 +135,7 @@ namespace SqlServerProcedureGenerator
             for (int i = 1; i < attributes.Length; i++)
             {
                 String awt = attributes[i].Replace("\t", "");
-                result += awt + " = " + " @" + awt;
+                result += awt + " = " + "@" + awt;
 
                 if (i != attributes.Length - 1) {
                     result += ",";
@@ -169,7 +169,23 @@ namespace SqlServerProcedureGenerator
 
         public static String GetDeleteByIdStatement(String createStatement, String prefix, String suffix)
         {
-            return "GetDeleteByIdStatement";
+
+            String result = "";
+            result += GetCreateProcedureRow(createStatement, prefix, "DeleteById", suffix);
+            result += " @Id ";
+            result += GetTableColumnTypes(createStatement)[0];
+            result += Enter();
+            result += "AS";
+            result += Enter();
+            result += "DELETE FROM ";
+            result += GetTableName(createStatement);
+            result += " WHERE ";
+            result += GetTableColumnNames(createStatement)[0].Replace("\t", "");
+            result += " = @Id";
+            result += Enter();
+            result += "GO";
+            return result;
+
         }
 
         public static String GetSearchByNameStatement(String createStatement, String prefix, String suffix, String searchBy = "")
