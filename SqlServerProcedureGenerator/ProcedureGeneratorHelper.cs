@@ -94,7 +94,77 @@ namespace SqlServerProcedureGenerator
 
         public static String GetUpdateByIdStatement(String createStatement, String prefix, String suffix)
         {
-            return "GetUpdateByIdStatement";
+            String result = "";
+            result += GetCreateProcedureRow(createStatement, prefix, "Update", suffix);
+            result += " ";
+
+            String[] attributes = GetTableColumnNames(createStatement);
+            String[] types = GetTableColumnTypes(createStatement);
+
+            if (attributes.Length < 1 && attributes.Length != types.Length) {
+                return "UPDATE BY STATEMENT ERROR: Invalid SQL Query: number of types != number of attributes";
+            }
+
+            result += "@Id ";
+            result += GetTableColumnTypes(createStatement)[0];
+            result += ", ";
+
+            for (int i = 1; i < attributes.Length; i++) {
+                String awt = attributes[i].Replace("\t", "");
+                String twt = types[i].Replace("\t", "");
+                result += "@" + awt + " " + twt + ", ";
+            }
+            result = result.Remove(result.Length - 1);
+            result = result.Remove(result.Length - 1);
+            result += Enter();
+
+            result += "AS";
+            result += Enter();
+            result += "IF EXISTS (SELECT * FROM ";
+            result += GetTableName(createStatement);
+            result += " WHERE ";
+            result += attributes[0];
+            result += " = @Id)";
+            result += Enter();
+
+            result += "UPDATE ";
+            result += GetTableName(createStatement);
+            result += Enter();
+            result += "SET ";
+
+            for (int i = 1; i < attributes.Length; i++)
+            {
+                String awt = attributes[i].Replace("\t", "");
+                result += awt + " = " + " @" + awt;
+
+                if (i != attributes.Length - 1) {
+                    result += ",";
+                }
+                result += Enter();
+            }
+
+            result += "SELECT ";
+            foreach (String a in attributes)
+            {
+                String withoutTabs = a.Replace("\t", "");
+                result += withoutTabs + ", ";
+            }
+
+            result = result.Remove(result.Length - 1);
+            result = result.Remove(result.Length - 1);
+            result += Enter();
+
+            result += "FROM ";
+            result += GetTableName(createStatement);
+            result += " WHERE ";
+            result += attributes[0].Replace("\t", "");
+            result += " = ";
+            result += "@Id";
+            result += Enter();
+
+            result += "GO";
+
+            return result;
         }
 
         public static String GetDeleteByIdStatement(String createStatement, String prefix, String suffix)
