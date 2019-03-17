@@ -28,7 +28,8 @@ namespace SqlServerProcedureGenerator
             }
 
             String result = "";
-
+            result += ProcedureGeneratorHelper.GetInsertStatement(createStatement, prefix, suffix);
+            result += NewLines();
             result += ProcedureGeneratorHelper.GetSelectAllStatement(createStatement, prefix, suffix);
             result += NewLines();
             result += ProcedureGeneratorHelper.GetSelectByIdStatement(createStatement, prefix, suffix);
@@ -41,6 +42,56 @@ namespace SqlServerProcedureGenerator
 
             return result;
 
+        }
+
+        public static String GetInsertStatement(String createStatement, String prefix, String suffix) {
+            String result = "";
+            result += GetCreateProcedureRow(createStatement, prefix, "Insert", suffix);
+            result += " ";
+
+            String[] attributes = GetTableColumnNames(createStatement);
+            String[] types = GetTableColumnTypes(createStatement);
+
+            if (attributes.Length < 1 && attributes.Length != types.Length)
+            {
+                return "UPDATE BY STATEMENT ERROR: Invalid SQL Query: number of types != number of attributes";
+            }
+
+            for (int i = 1; i < attributes.Length; i++)
+            {
+                String awt = attributes[i].Replace("\t", "");
+                String twt = types[i].Replace("\t", "");
+                result += "@" + awt + " " + twt + ", ";
+            }
+            result = result.Remove(result.Length - 1);
+            result = result.Remove(result.Length - 1);
+            result += Enter();
+
+            result += "AS";
+            result += Enter();
+            result += "INSERT INTO " + GetTableName(createStatement) + "(";
+            for (int i = 1; i < attributes.Length; i++)
+            {
+                String awt = attributes[i].Replace("\t", "");
+                result += awt + ", ";
+            }
+            result = result.Remove(result.Length - 1);
+            result = result.Remove(result.Length - 1);
+            result += ")";
+            result += Enter();
+            result += "VALUES (";
+            for (int i = 1; i < attributes.Length; i++)
+            {
+                String awt = attributes[i].Replace("\t", "");
+                result += "@" + awt + ", ";
+            }
+            result = result.Remove(result.Length - 1);
+            result = result.Remove(result.Length - 1);
+            result += ")";
+            result += Enter();
+            result += "GO";
+
+            return result;
         }
 
         public static String GetSelectAllStatement(String createStatement, String prefix, String suffix)
@@ -98,6 +149,9 @@ namespace SqlServerProcedureGenerator
             result += "FROM ";
             result += GetTableName(createStatement);
             result += " WHERE ";
+
+            if (attributes.Length == 0) { return ""; } 
+
             result += attributes[0].Replace("\t", "");
             result += " = ";
             result += "@Id";
@@ -205,7 +259,10 @@ namespace SqlServerProcedureGenerator
             result += "DELETE FROM ";
             result += GetTableName(createStatement);
             result += " WHERE ";
-            result += GetTableColumnNames(createStatement)[0].Replace("\t", "");
+
+            String[] columnNames = GetTableColumnNames(createStatement);
+            if (columnNames.Length == 0) { return ""; }
+            result += columnNames[0].Replace("\t", "");
             result += " = @Id";
             result += Enter();
             result += "GO";
@@ -272,7 +329,8 @@ namespace SqlServerProcedureGenerator
             List<String> attributes = new List<String>();
 
             foreach (String line in linesList) {
-                String[] parts = line.Split(' ');
+                String lineFormatted = line;//.Trim();
+                String[] parts = lineFormatted.Split(' ');
                 if (parts.Length > 2) {
                     String a = parts[0].Replace("\t", "");
                     attributes.Add(parts[0]);

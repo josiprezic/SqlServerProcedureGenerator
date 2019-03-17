@@ -50,5 +50,12 @@ namespace SqlServerProcedureGenerator
         {
             textBoxStatement.Text = "";
         }
+
+        private void textBoxStatement_Click(object sender, EventArgs e)
+        {
+            if (textBoxStatement.Text.Length != 0) { return; }
+            if(Clipboard.GetText().Length == 0) { return; }
+            textBoxStatement.Text = Clipboard.GetText();
+        }
     }
 }

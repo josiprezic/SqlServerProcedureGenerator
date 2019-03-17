@@ -52,7 +52,7 @@
             this.textBoxStatement.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxStatement.Size = new System.Drawing.Size(692, 151);
             this.textBoxStatement.TabIndex = 0;
-            this.textBoxStatement.Click += new System.EventHandler(this.buttonPasteClipboard_Click);
+            this.textBoxStatement.Click += new System.EventHandler(this.textBoxStatement_Click);
             // 
             // label1
             // 
