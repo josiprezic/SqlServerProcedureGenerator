@@ -1,0 +1,5 @@
+C:\Users\Jopara\Desktop\SqlServerProcedureGenerator\SqlServerProcedureGenerator\obj\Debug\SqlServerProcedureGenerator.csprojAssemblyReference.cache
+C:\Users\Jopara\Desktop\SqlServerProcedureGenerator\SqlServerProcedureGenerator\obj\Debug\SqlServerProcedureGenerator.Form1.resources
+C:\Users\Jopara\Desktop\SqlServerProcedureGenerator\SqlServerProcedureGenerator\obj\Debug\SqlServerProcedureGenerator.Properties.Resources.resources
+C:\Users\Jopara\Desktop\SqlServerProcedureGenerator\SqlServerProcedureGenerator\obj\Debug\SqlServerProcedureGenerator.csproj.GenerateResource.cache
+C:\Users\Jopara\Desktop\SqlServerProcedureGenerator\SqlServerProcedureGenerator\obj\Debug\SqlServerProcedureGenerator.csproj.CoreCompileInputs.cache
