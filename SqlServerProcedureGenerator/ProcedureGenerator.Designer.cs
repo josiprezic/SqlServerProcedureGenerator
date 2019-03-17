@@ -39,6 +39,9 @@
             this.buttonCreateProcedures = new System.Windows.Forms.Button();
             this.textBoxSearchBy = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.buttonPasteClipboard = new System.Windows.Forms.Button();
+            this.buttonCopyClipboard = new System.Windows.Forms.Button();
+            this.buttonClear = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxStatement
@@ -47,8 +50,9 @@
             this.textBoxStatement.Multiline = true;
             this.textBoxStatement.Name = "textBoxStatement";
             this.textBoxStatement.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxStatement.Size = new System.Drawing.Size(700, 151);
+            this.textBoxStatement.Size = new System.Drawing.Size(692, 151);
             this.textBoxStatement.TabIndex = 0;
+            this.textBoxStatement.Click += new System.EventHandler(this.buttonPasteClipboard_Click);
             // 
             // label1
             // 
@@ -97,7 +101,7 @@
             this.textBoxResult.Multiline = true;
             this.textBoxResult.Name = "textBoxResult";
             this.textBoxResult.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxResult.Size = new System.Drawing.Size(700, 336);
+            this.textBoxResult.Size = new System.Drawing.Size(692, 326);
             this.textBoxResult.TabIndex = 6;
             // 
             // label4
@@ -113,7 +117,7 @@
             // 
             this.buttonCreateProcedures.Location = new System.Drawing.Point(15, 320);
             this.buttonCreateProcedures.Name = "buttonCreateProcedures";
-            this.buttonCreateProcedures.Size = new System.Drawing.Size(698, 46);
+            this.buttonCreateProcedures.Size = new System.Drawing.Size(690, 46);
             this.buttonCreateProcedures.TabIndex = 8;
             this.buttonCreateProcedures.Text = "Create procedures";
             this.buttonCreateProcedures.UseVisualStyleBackColor = true;
@@ -135,11 +139,44 @@
             this.label5.TabIndex = 9;
             this.label5.Text = "Search by";
             // 
+            // buttonPasteClipboard
+            // 
+            this.buttonPasteClipboard.Location = new System.Drawing.Point(589, 144);
+            this.buttonPasteClipboard.Name = "buttonPasteClipboard";
+            this.buttonPasteClipboard.Size = new System.Drawing.Size(86, 74);
+            this.buttonPasteClipboard.TabIndex = 11;
+            this.buttonPasteClipboard.Text = "Paste from clipboard";
+            this.buttonPasteClipboard.UseVisualStyleBackColor = true;
+            this.buttonPasteClipboard.Click += new System.EventHandler(this.buttonPasteClipboard_Click);
+            // 
+            // buttonCopyClipboard
+            // 
+            this.buttonCopyClipboard.Location = new System.Drawing.Point(589, 419);
+            this.buttonCopyClipboard.Name = "buttonCopyClipboard";
+            this.buttonCopyClipboard.Size = new System.Drawing.Size(86, 70);
+            this.buttonCopyClipboard.TabIndex = 12;
+            this.buttonCopyClipboard.Text = "Copy to clipboard";
+            this.buttonCopyClipboard.UseVisualStyleBackColor = true;
+            this.buttonCopyClipboard.Click += new System.EventHandler(this.buttonCopyClipboard_Click);
+            // 
+            // buttonClear
+            // 
+            this.buttonClear.Location = new System.Drawing.Point(589, 237);
+            this.buttonClear.Name = "buttonClear";
+            this.buttonClear.Size = new System.Drawing.Size(86, 32);
+            this.buttonClear.TabIndex = 13;
+            this.buttonClear.Text = "Clear";
+            this.buttonClear.UseVisualStyleBackColor = true;
+            this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
+            // 
             // ProcedureGenerator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(717, 744);
+            this.ClientSize = new System.Drawing.Size(711, 744);
+            this.Controls.Add(this.buttonClear);
+            this.Controls.Add(this.buttonCopyClipboard);
+            this.Controls.Add(this.buttonPasteClipboard);
             this.Controls.Add(this.textBoxSearchBy);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.buttonCreateProcedures);
@@ -151,6 +188,8 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBoxStatement);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
+            this.MaximizeBox = false;
             this.Name = "ProcedureGenerator";
             this.Text = "Procedure Generator";
             this.ResumeLayout(false);
@@ -171,6 +210,9 @@
         private System.Windows.Forms.Button buttonCreateProcedures;
         private System.Windows.Forms.TextBox textBoxSearchBy;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button buttonPasteClipboard;
+        private System.Windows.Forms.Button buttonCopyClipboard;
+        private System.Windows.Forms.Button buttonClear;
     }
 }
 

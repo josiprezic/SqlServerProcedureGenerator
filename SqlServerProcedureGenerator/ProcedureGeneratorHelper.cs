@@ -10,8 +10,22 @@ namespace SqlServerProcedureGenerator
     {
         private ProcedureGeneratorHelper() { }
 
+        public static String IsCreateSqlStatementValidAndPrettyFormatted(String statement) {
+            String[] words = statement.Split(' ');
+            if (words.Length < 6) { return "Invalid SQL Create statement."; }
+            if (words[0] != "CREATE" || words[1] != "TABLE") { return "Can't find CREATE TABLE string."; }
+            if (!words[words.Length - 1].Contains("GO")) { return "Can't find 'GO' keyword."; } 
+            return "";
+        }
+
         public static String GetProcedures(String createStatement, String prefix, String suffix, String searchBy = "")
         {
+
+            String validationMessage = IsCreateSqlStatementValidAndPrettyFormatted(createStatement);
+
+            if (validationMessage != "") {
+                return validationMessage;
+            }
 
             String result = "";
 
@@ -62,7 +76,9 @@ namespace SqlServerProcedureGenerator
             String result = "";
             result += GetCreateProcedureRow(createStatement, prefix, "SelectById", suffix);
             result += " @Id ";
-            result += GetTableColumnTypes(createStatement)[0];
+            String[] types = GetTableColumnTypes(createStatement);
+            if (types.Length == 0) { return "Error: Please type in valid and formatted SQL create statement."; }
+            result += types[0];
             result += Enter();
             result += "AS";
             result += Enter();
@@ -105,7 +121,10 @@ namespace SqlServerProcedureGenerator
             }
 
             result += "@Id ";
-            result += GetTableColumnTypes(createStatement)[0];
+
+            String[] colTypes = GetTableColumnTypes(createStatement);
+            if (colTypes.Length == 0) { return "Error: Please type in valid and formatted SQL create statement."; }
+            result += colTypes[0];
             result += ", ";
 
             for (int i = 1; i < attributes.Length; i++) {
@@ -141,6 +160,10 @@ namespace SqlServerProcedureGenerator
                 }
                 result += Enter();
             }
+            result += "WHERE ";
+            result += attributes[0].Replace("\t", "");
+            result += " = @Id";
+            result += Enter();
 
             result += "SELECT ";
             foreach (String a in attributes)
@@ -172,7 +195,10 @@ namespace SqlServerProcedureGenerator
             String result = "";
             result += GetCreateProcedureRow(createStatement, prefix, "DeleteById", suffix);
             result += " @Id ";
-            result += GetTableColumnTypes(createStatement)[0];
+
+            String[] colTypes = GetTableColumnTypes(createStatement);
+            if (colTypes.Length == 0) { return "Error: Please type in valid and formatted SQL create statement."; }
+            result += colTypes[0];
             result += Enter();
             result += "AS";
             result += Enter();
@@ -238,6 +264,7 @@ namespace SqlServerProcedureGenerator
 
 
             List<String> linesList = lines.ToList();
+            if (linesList.Count < 4) { return new String[0]; }
             linesList.RemoveAt(0);
             linesList.RemoveAt(linesList.Count - 1);
             linesList.RemoveAt(linesList.Count - 1);
@@ -281,6 +308,7 @@ namespace SqlServerProcedureGenerator
 
 
             List<String> linesList = lines.ToList();
+            if (linesList.Count < 4) { return new String[0]; }
             linesList.RemoveAt(0);
             linesList.RemoveAt(linesList.Count - 1);
             linesList.RemoveAt(linesList.Count - 1);
