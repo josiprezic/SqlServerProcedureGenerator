@@ -30,9 +30,6 @@ namespace SqlServerProcedureGenerator
 
         }
 
-
-
-
         public static String GetSelectAllStatement(String createStatement, String prefix, String suffix)
         {
             String result = "";
@@ -58,16 +55,41 @@ namespace SqlServerProcedureGenerator
             result += "GO";
 
             return result;
-
         }
 
         public static String GetSelectByIdStatement(String createStatement, String prefix, String suffix)
         {
-            return "GetSelectByIdStatement";
 
-            /*
-             
-             */
+            String result = "";
+            result += GetCreateProcedureRow(createStatement, prefix, "SelectById", suffix);
+            result += " @Id ";
+            result += GetTableColumnTypes(createStatement)[0];
+            result += Enter();
+            result += "AS";
+            result += Enter();
+            result += "SELECT ";
+
+            String[] attributes = GetTableColumnNames(createStatement);
+            foreach (String a in attributes)
+            {
+                String withoutTabs = a.Replace("\t", "");
+                result += withoutTabs + ", ";
+            }
+
+            result = result.Remove(result.Length - 1);
+            result = result.Remove(result.Length - 1);
+            result += Enter();
+
+            result += "FROM ";
+            result += GetTableName(createStatement);
+            result += " WHERE ";
+            result += attributes[0].Replace("\t", "");
+            result += " = ";
+            result += "@Id";
+            result += Enter();
+            result += "GO";
+
+            return result;
         }
 
         public static String GetUpdateByIdStatement(String createStatement, String prefix, String suffix)
@@ -102,6 +124,7 @@ namespace SqlServerProcedureGenerator
             foreach (String line in linesList) {
                 String[] parts = line.Split(' ');
                 if (parts.Length > 2) {
+                    String a = parts[0].Replace("\t", "");
                     attributes.Add(parts[0]);
                 }
             }
@@ -109,6 +132,32 @@ namespace SqlServerProcedureGenerator
             return attributes.ToArray();
         }
 
+        private static String[] GetTableColumnTypes(String createStatement)
+        {
+            String[] lines = createStatement.Split(
+            new[] { Environment.NewLine },
+            StringSplitOptions.None
+            );
+
+
+            List<String> linesList = lines.ToList();
+            linesList.RemoveAt(0);
+            linesList.RemoveAt(linesList.Count - 1);
+            linesList.RemoveAt(linesList.Count - 1);
+
+            List<String> attributes = new List<String>();
+
+            foreach (String line in linesList)
+            {
+                String[] parts = line.Split(' ');
+                if (parts.Length > 2)
+                {
+                    attributes.Add(parts[1]);
+                }
+            }
+
+            return attributes.ToArray();
+        }
 
         private static String GetCreateProcedureRow(String createStatement, String prefix, String name, String suffix) {
             String result = "CREATE PROCEDURE ";
