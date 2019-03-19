@@ -20,18 +20,8 @@ namespace SqlServerProcedureGenerator
 
         private void buttonCreateProcedures_Click(object sender, EventArgs e)
         {
-
-            String text = textBoxStatement.Text.Trim();
-            RegexOptions options = RegexOptions.None;
-            Regex regex = new Regex("[ ]{2,}", options);
-            text = regex.Replace(text, " ");
-            textBoxStatement.Text = text;
-
-            String createStatement = textBoxStatement.Text;
-            String prefix = textBoxProcedurePrefix.Text;
-            String sufix = textBoxProcedureSufix.Text;
-            String searchBy = textBoxSearchBy.Text;
-            textBoxResult.Text = ProcedureGeneratorHelper.GetProcedures(createStatement, prefix, sufix, searchBy);
+            formatText();   
+            textBoxResult.Text = ProcedureGeneratorHelper.GetProcedures(textBoxStatement.Text, textBoxProcedurePrefix.Text, textBoxProcedureSufix.Text, textBoxSearchBy.Text);
         }
 
         private void buttonPasteClipboard_Click(object sender, EventArgs e)
@@ -56,6 +46,15 @@ namespace SqlServerProcedureGenerator
             if (textBoxStatement.Text.Length != 0) { return; }
             if(Clipboard.GetText().Length == 0) { return; }
             textBoxStatement.Text = Clipboard.GetText();
+        }
+
+        private void formatText()
+        {
+            String text = textBoxStatement.Text.Trim();
+            RegexOptions options = RegexOptions.None;
+            Regex regex = new Regex("[ ]{2,}", options);
+            text = regex.Replace(text, " ");
+            textBoxStatement.Text = text;
         }
     }
 }
